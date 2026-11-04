@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
@@ -264,6 +265,8 @@ export default function ContentManager({ kind }: { kind: Kind }) {
   return (
     <main className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-7xl px-5 py-8 sm:px-8">
+
+        {/* PAGE INTRO */}
         <div className="mb-8">
           <p className="text-sm font-medium text-teal-700">
             PropelGo CMS / Website content
@@ -289,6 +292,7 @@ export default function ContentManager({ kind }: { kind: Kind }) {
           </div>
         )}
 
+        {/* ADD / EDIT FORM */}
         <section className="mb-8 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <h2 className="text-lg font-semibold text-slate-900">
             {editingId === null ? `Add ${singular}` : `Edit ${singular}`}
@@ -296,6 +300,7 @@ export default function ContentManager({ kind }: { kind: Kind }) {
 
           <form onSubmit={submit} className="mt-6 space-y-5">
             <div className="grid gap-5 md:grid-cols-2">
+
               <label className="text-sm font-medium text-slate-700">
                 {isTeam ? "Full name *" : "Article name *"}
                 <input
@@ -322,10 +327,18 @@ export default function ContentManager({ kind }: { kind: Kind }) {
                 </label>
               )}
 
+              {/* IMAGE UPLOAD */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-slate-700">
-                  {isTeam ? "Team member image *" : "Article image *"}
+                  {isTeam ? "Team member portrait *" : "Article image *"}
                 </label>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  {isTeam
+                    ? "Upload a vertical portrait photograph. Recommended ratio: 3:4."
+                    : "Upload an article image."}
+                  {" "}JPG, PNG, WEBP or GIF. Maximum 5 MB.
+                </p>
 
                 <input
                   type="file"
@@ -335,32 +348,56 @@ export default function ContentManager({ kind }: { kind: Kind }) {
                     void uploadImage(e.target.files?.[0]);
                     e.currentTarget.value = "";
                   }}
-                  className="mt-2 block w-full rounded-xl border border-slate-200 p-3 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-teal-50 file:px-4 file:py-2 file:font-semibold file:text-teal-800"
+                  className="mt-3 block w-full rounded-xl border border-slate-200 p-3 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-teal-50 file:px-4 file:py-2 file:font-semibold file:text-teal-800"
                 />
 
-                <p className="mt-2 text-xs text-slate-500">
-                  JPG, PNG, WEBP or GIF. Maximum 5 MB.
-                </p>
-
                 {uploading && (
-                  <p className="mt-2 text-sm text-teal-700">Uploading image…</p>
+                  <p className="mt-2 text-sm text-teal-700">
+                    Uploading image…
+                  </p>
                 )}
 
                 {form.image_url && (
-                  <div className="mt-4 flex min-h-28 items-center gap-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={form.image_url}
-                      alt="Image preview"
-                      className="h-24 w-32 rounded-lg object-contain"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => update("image_url", "")}
-                      className="text-sm font-semibold text-red-600 hover:text-red-700"
+                  <div className="mt-4 flex flex-wrap items-center gap-5 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+
+                    <div
+                      className={
+                        isTeam
+                          ? "h-48 w-36 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white"
+                          : "h-28 w-40 shrink-0 overflow-hidden rounded-xl border border-slate-200 bg-white"
+                      }
                     >
-                      Remove image
-                    </button>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={form.image_url}
+                        alt={isTeam ? "Team member portrait preview" : "Article image preview"}
+                        className={
+                          isTeam
+                            ? "h-full w-full object-cover object-top"
+                            : "h-full w-full object-contain"
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">
+                        {isTeam ? "Portrait preview" : "Image preview"}
+                      </p>
+
+                      <p className="mt-1 text-xs text-slate-500">
+                        {isTeam
+                          ? "Displayed in portrait format (3:4)."
+                          : "Article image preview."}
+                      </p>
+
+                      <button
+                        type="button"
+                        onClick={() => update("image_url", "")}
+                        className="mt-3 text-sm font-semibold text-red-600 hover:text-red-700"
+                      >
+                        Remove image
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -441,6 +478,7 @@ export default function ContentManager({ kind }: { kind: Kind }) {
           </form>
         </section>
 
+        {/* RECORD LIST */}
         <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div className="border-b border-slate-200 px-5 py-4 sm:px-7">
             <h2 className="font-semibold text-slate-900">
@@ -469,6 +507,7 @@ export default function ContentManager({ kind }: { kind: Kind }) {
                     <th className="px-5 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-slate-100">
                   {items.map((item) => {
                     const active =
@@ -477,21 +516,36 @@ export default function ContentManager({ kind }: { kind: Kind }) {
                     return (
                       <tr key={item.id} className="hover:bg-slate-50">
                         <td className="px-5 py-4">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={item.image_url}
-                            alt=""
-                            className="h-12 w-16 rounded-lg border border-slate-200 object-contain"
-                          />
+                          <div
+                            className={
+                              isTeam
+                                ? "h-20 w-16 overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
+                                : "h-12 w-16 overflow-hidden rounded-lg border border-slate-200 bg-slate-50"
+                            }
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={item.image_url}
+                              alt={item.name}
+                              className={
+                                isTeam
+                                  ? "h-full w-full object-cover object-top"
+                                  : "h-full w-full object-contain"
+                              }
+                            />
+                          </div>
                         </td>
+
                         <td className="px-5 py-4 font-medium text-slate-900">
                           {item.name}
                         </td>
+
                         {isTeam && (
                           <td className="px-5 py-4 text-slate-600">
                             {item.designation}
                           </td>
                         )}
+
                         <td className="px-5 py-4">
                           <span
                             className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
@@ -503,6 +557,7 @@ export default function ContentManager({ kind }: { kind: Kind }) {
                             {active ? "Active" : "Inactive"}
                           </span>
                         </td>
+
                         <td className="px-5 py-4">
                           <div className="flex justify-end gap-2">
                             <button
@@ -512,6 +567,7 @@ export default function ContentManager({ kind }: { kind: Kind }) {
                             >
                               Edit
                             </button>
+
                             <button
                               type="button"
                               onClick={() => void deleteItem(item)}
